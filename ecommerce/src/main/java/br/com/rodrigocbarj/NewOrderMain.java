@@ -1,5 +1,6 @@
 package br.com.rodrigocbarj;
 
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -12,8 +13,11 @@ public class NewOrderMain {
         var producer = new KafkaProducer<String, String>(properties());
         var key = "155558912";
         var value = "3268,109.90";
+        var email = "Obrigado por seu pedido! Estamos processando sua compra.";
         var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER", key, value);
-        producer.send(record, (data, exception) -> {
+        var emailRecord = new ProducerRecord<>("ECOMMERCE_SEND_EMAIL", key, email);
+
+        Callback callback = (data, exception) -> {
             if (exception != null) {
                 exception.printStackTrace();
                 return;
@@ -22,7 +26,10 @@ public class NewOrderMain {
                     "\npartição: " + data.partition() +
                     "\noffset: " + data.offset() +
                     "\ntimestamp: " + data.timestamp());
-        }).get();
+        };
+
+        producer.send(record, callback).get();
+        producer.send(emailRecord, callback).get();
     }
 
     private static Properties properties() {
