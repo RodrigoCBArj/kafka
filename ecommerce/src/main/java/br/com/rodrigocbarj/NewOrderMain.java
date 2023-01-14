@@ -6,12 +6,13 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class NewOrderMain {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         var producer = new KafkaProducer<String, String>(properties());
-        var key = "155558912";
+        var key = UUID.randomUUID().toString();
         var value = "3268,109.90";
         var email = "Obrigado por seu pedido! Estamos processando sua compra.";
         var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER", key, value);
