@@ -18,19 +18,21 @@ public class NewOrderMain {
         var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER", key, value);
         var emailRecord = new ProducerRecord<>("ECOMMERCE_SEND_EMAIL", key, email);
 
-        Callback callback = (data, exception) -> {
-            if (exception != null) {
-                exception.printStackTrace();
-                return;
-            }
-            System.out.println("MENSAGEM ENVIADA COM SUCESSO PARA: " + data.topic() +
-                    "\npartição: " + data.partition() +
-                    "\noffset: " + data.offset() +
-                    "\ntimestamp: " + data.timestamp());
-        };
+        for (int i = 0; i < 5; i++) { // teste - enviar 5 compras
+            Callback callback = (data, exception) -> {
+                if (exception != null) {
+                    exception.printStackTrace();
+                    return;
+                }
+                System.out.println("MENSAGEM ENVIADA COM SUCESSO PARA: " + data.topic() +
+                        "\npartição: " + data.partition() +
+                        "\noffset: " + data.offset() +
+                        "\ntimestamp: " + data.timestamp());
+            };
 
-        producer.send(record, callback).get();
-        producer.send(emailRecord, callback).get();
+            producer.send(record, callback).get();
+            producer.send(emailRecord, callback).get();
+        }
     }
 
     private static Properties properties() {
