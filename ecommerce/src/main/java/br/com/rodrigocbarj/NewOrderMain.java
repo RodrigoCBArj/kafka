@@ -13,7 +13,8 @@ public class NewOrderMain {
         try (var orderDispatcher = new KafkaDispatcher<Order>()) {
                 var orderId = UUID.randomUUID().toString();
                 var userId = UUID.randomUUID().toString();
-                var amount = new BigDecimal(Math.random() * 5000 + 1);
+                var amount = new BigDecimal(Math.random() * 5000 + 1)
+                                    .setScale(2, BigDecimal.ROUND_HALF_EVEN);
                 var order = new Order(orderId, userId, amount);
 
                 orderDispatcher.send("ECOMMERCE_NEW_ORDER", orderId, order);
