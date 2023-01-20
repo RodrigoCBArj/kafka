@@ -31,19 +31,17 @@ class KafkaDispatcher<T> implements Closeable {
             throws ExecutionException, InterruptedException {
         var record = new ProducerRecord<>(topic, key, value);
 
-        for (int i = 0; i < 5; i++) { // teste - enviar 5 compras
-            Callback callback = (data, exception) -> {
-                if (exception != null) {
-                    exception.printStackTrace();
-                    return;
-                }
-                System.out.println("MENSAGEM ENVIADA COM SUCESSO PARA: " + data.topic() +
-                        "\ntimestamp: " + data.timestamp() +
-                        "\npartição: " + data.partition() +
-                        " | offset: " + data.offset());
-            };
-            producer.send(record, callback).get();
-        }
+        Callback callback = (data, exception) -> {
+            if (exception != null) {
+                exception.printStackTrace();
+                return;
+            }
+            System.out.println("MENSAGEM ENVIADA COM SUCESSO PARA: " + data.topic() +
+                    "\ntimestamp: " + data.timestamp() +
+                    "\npartição: " + data.partition() +
+                    " | offset: " + data.offset());
+        };
+        producer.send(record, callback).get();
     }
 
     @Override
